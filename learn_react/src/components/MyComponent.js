@@ -1,23 +1,23 @@
 // class component
 // function component
 
-import React from 'react'
-import UserInfor from './UserInfor';
+import React, { useState } from 'react'
+import AddUserInfor from './AddUserInfor';
 import DisplayInfor from './DisplayInfor';
 
-class MyComponent extends React.Component {
+const MyComponent = (props) => {
 
-    state = {
-        listUsers: [
+    const [listUser, setListUser] = useState(
+        [
             {
                 id: 1,
                 name: 'Hung',
-                age: 30
+                age: 31
             },
             {
                 id: 2,
                 name: 'Hung1',
-                age: 301
+                age: 16
             },
             {
                 id: 3,
@@ -30,20 +30,33 @@ class MyComponent extends React.Component {
                 age: 304
             }
         ]
+    )
+
+    const handleAddNewUser = (userObj) => {
+        setListUser([userObj, ...listUser])
+    }
+
+    const handleDeleteUser = (userID) => {
+        let listUserClone = [...listUser]
+        listUserClone = listUserClone.filter(item => item.id !== userID)
+        setListUser(listUserClone)
     }
 
     //jsx
 
     //DRY: dont repeat yourself
-    render() {
-        return (
-            <div>
-                <UserInfor></UserInfor>
-                <br></br>
-                <DisplayInfor listUsers={this.state.listUsers}></DisplayInfor>
-            </div>
-        );
-    }
+    return (
+        <div>
+            <AddUserInfor
+                handleAddNewUser={handleAddNewUser}
+            ></AddUserInfor>
+            <br></br>
+            <DisplayInfor
+                listUser={listUser}
+                handleDeleteUser={handleDeleteUser}
+            ></DisplayInfor>
+        </div>
+    );
 }
 
 export default MyComponent
