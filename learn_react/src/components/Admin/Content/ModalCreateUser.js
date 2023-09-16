@@ -2,17 +2,25 @@ import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { FcPlus } from 'react-icons/fc'
+import axios from 'axios';
 
 const ModalCreateUser = (props) => {
-    const [show, setShow] = useState(false);
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
-
+    const { show, setShow } = props
+    // const [show, setShow] = useState(false);
+    const handleClose = () => {
+        setShow(false)
+        setEmail("")
+        setPassWord("")
+        setUsername("")
+        setRole("USER")
+        setImage("")
+        setPreviewImage("")
+    };
 
     const [email, setEmail] = useState('')
     const [password, setPassWord] = useState('')
     const [username, setUsername] = useState('')
-    const [role, setRole] = useState('User')
+    const [role, setRole] = useState('USER')
     const [image, setImage] = useState('')
     const [previewImage, setPreviewImage] = useState('')
 
@@ -26,11 +34,39 @@ const ModalCreateUser = (props) => {
         }
         // console.log("upload file", event.target.files[0]);
     }
+
+    const handleSubmitCreateUser = async () => {
+        //validate
+
+        //call API
+        // let data = {
+        //     email: email,
+        //     password: password,
+        //     username: username,
+        //     role: role,
+        //     userImage: image
+        // }
+        // console.log(data);
+
+
+        const data = new FormData();
+        data.append('email', email);
+        data.append('password', password);
+        data.append('username', username);
+        data.append('role', role);
+        data.append('userImage', image);
+
+        let res = await axios.post('http://localhost:8081/api/v1/participant', data);
+        console.log(res.data);
+    }
+
+
+
     return (
         <>
-            <Button variant="primary" onClick={handleShow}>
+            {/* <Button variant="primary" onClick={handleShow}>
                 Add New User
-            </Button>
+            </Button> */}
             <Modal className='modal-add-user' show={show} onHide={handleClose} size='xl' backdrop="static">
                 <Modal.Header closeButton>
                     <Modal.Title>Add New User</Modal.Title>
@@ -52,9 +88,9 @@ const ModalCreateUser = (props) => {
                         </div>
                         <div className="col-md-6">
                             <label className="form-label">Role</label>
-                            <select className="form-select" onChange={(event) => setRole(event.target.value)}>
-                                <option value="User">User</option>
-                                <option value="Admin">Admin</option>
+                            <select className="form-select" value={role} onChange={(event) => setRole(event.target.value)}>
+                                <option value="USER">USER</option>
+                                <option value="ADMIN">ADMIN</option>
                             </select>
                         </div>
                         <div className='col-md-12'>
@@ -76,7 +112,7 @@ const ModalCreateUser = (props) => {
                     <Button variant="secondary" onClick={handleClose}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={handleClose}>
+                    <Button variant="primary" onClick={() => handleSubmitCreateUser()}>
                         Save
                     </Button>
                 </Modal.Footer>
